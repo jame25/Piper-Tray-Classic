@@ -47,6 +47,7 @@ namespace PiperTrayClassic
             SetLogFilePath();
             var (model, speed, logging) = ReadSettings();
             isLoggingEnabled = logging;
+            CheckVoiceFiles();
             Log("Application started");
             LogAudioDevices();
             LogDefaultAudioDevice();
@@ -63,14 +64,14 @@ namespace PiperTrayClassic
                 Icon = new Icon(iconPath),
                 ContextMenuStrip = new ContextMenuStrip(),
                 Visible = true,
-                Text = "Piper Tray Classic"
+                Text = "Piper Tray"
             };
 
-            toggleMonitoringMenuItem = new ToolStripMenuItem("Stop Monitoring", null, ToggleMonitoring)
+            toggleMonitoringMenuItem = new ToolStripMenuItem("Monitoring", null, ToggleMonitoring)
             {
                 Checked = true
             };
-            stopPlaybackMenuItem = new ToolStripMenuItem("Stop Playback", null, StopPlayback);
+            stopPlaybackMenuItem = new ToolStripMenuItem("Stop Speech", null, StopPlayback);
             exitMenuItem = new ToolStripMenuItem("Exit", null, Exit);
 
             trayIcon.ContextMenuStrip.Items.Add(toggleMonitoringMenuItem);
@@ -80,6 +81,17 @@ namespace PiperTrayClassic
             this.FormBorderStyle = FormBorderStyle.None;
             this.ShowInTaskbar = false;
             this.WindowState = FormWindowState.Minimized;
+        }
+
+        private void CheckVoiceFiles()
+        {
+            string appDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string[] onnxFiles = Directory.GetFiles(appDirectory, "*.onnx");
+
+            if (onnxFiles.Length == 0)
+            {
+                MessageBox.Show("No voice files (.onnx) detected in the application directory. The application may not function correctly.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
         protected override void WndProc(ref Message m)
@@ -166,20 +178,20 @@ namespace PiperTrayClassic
         {
             isMonitoring = true;
             toggleMonitoringMenuItem.Checked = true;
-            toggleMonitoringMenuItem.Text = "Stop Monitoring";
+            toggleMonitoringMenuItem.Text = "Monitoring";
             clipboardTimer.Start();
             Log("Clipboard monitoring started");
-            trayIcon.ShowBalloonTip(3000, "Piper Tray Classic", "Clipboard monitoring started", ToolTipIcon.Info);
+            trayIcon.ShowBalloonTip(3000, "Piper Tray", "Clipboard monitoring started", ToolTipIcon.Info);
         }
 
         private void StopMonitoring()
         {
             isMonitoring = false;
             toggleMonitoringMenuItem.Checked = false;
-            toggleMonitoringMenuItem.Text = "Start Monitoring";
+            toggleMonitoringMenuItem.Text = "Monitoring";
             clipboardTimer.Stop();
             Log("Clipboard monitoring stopped");
-            trayIcon.ShowBalloonTip(3000, "Piper Tray Classic", "Clipboard monitoring stopped", ToolTipIcon.Info);
+            trayIcon.ShowBalloonTip(3000, "Piper Tray", "Clipboard monitoring stopped", ToolTipIcon.Info);
         }
 
         private void ToggleMonitoring(object sender, EventArgs e)
@@ -227,7 +239,7 @@ namespace PiperTrayClassic
         private (string model, float speed, bool logging) ReadSettings()
         {
             string settingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "settings.conf");
-            string model = "en_us-jane-medium.onnx";
+            string model = "en_US-libritts_r-medium.onnx";
             float speed = 1.0f;
             bool logging = false;
 
@@ -433,4 +445,3 @@ namespace PiperTrayClassic
         }
     }
 }
-
