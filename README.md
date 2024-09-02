@@ -22,7 +22,7 @@ If you want more features, see: [Piper Tray](https://github.com/jame25/Piper-Tra
 
 ## Install:
 
-- Download the latest version of Piper Tray from [releases](https://github.com/jame25/Piper-Tray/releases/).
+- Download the latest version of Piper Tray from [releases](https://github.com/jame25/Piper-Tray-Classic/releases/).
 - Grab the latest Windows binary for Piper from [here](https://github.com/rhasspy/piper/releases). Voice models are available [here](https://huggingface.co/rhasspy/piper-voices/tree/main).
 - <b>Extract all of the above into the same directory</b>.
 
